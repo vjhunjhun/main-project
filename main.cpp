@@ -15,7 +15,9 @@ int main() {
     const int screenWidth = 800;
     const int screenHeight = 600;
     InitWindow(screenWidth, screenHeight, "Simons memory game");
-    vector<int> vect;
+    vector<int> gameSeq;
+    // vector<int> playerSeq;
+    int *playerSeq = new int[0];
     Texture2D background = LoadTexture("resources/background.png");
     Font font = LoadFontEx("resources/JokermanFont.ttf", 150,0,250);
     Font font1 = LoadFontEx("resources/BlackadderITC.otf", 150,0,250);
@@ -56,6 +58,10 @@ int main() {
       
          while(!out){
             level++;
+            playerSeq= new int[level];
+            for(int i=0;i<level;i++){
+                playerSeq[i]=-1;
+            }
            if(WindowShouldClose()){
                 CloseWindow(); // Close window and OpenGL context
                  return 0;
@@ -66,7 +72,10 @@ int main() {
                  randomNumber = (rand() % 4);
                  flag =1;
             }
-            
+            gameSeq.push_back(randomNumber);
+            for(int j=0;j<gameSeq.size();j++){
+                cout<<gameSeq[j];
+            }
             // DrawText(TextFormat("number: %d", randomNumber), 100, 50, 20, BLACK);
             //  DrawText(TextFormat("Level: %d", level), 10, 100, 20, BLACK);
              blinkTimers[randomNumber]=0.450f;
@@ -112,8 +121,10 @@ int main() {
         // }
        bool out1=false;
          check=true;
+         int j=0;
         while(!out1){
             startCond=false;
+            
             // check =true;
              Vector2 mousePoint = GetMousePosition();
              if(WindowShouldClose()){
@@ -139,6 +150,7 @@ int main() {
        DrawTexture(background, 0, 0, WHITE);
         DrawText(TextFormat("number: %d", randomNumber), 100, 50, 20, BLACK);
              DrawText(TextFormat("Level: %d", level), 10, 100, 20, BLACK);
+
     for (int i = 0; i < 4; i++) {
        //we can add timer here maybe
            
@@ -146,20 +158,35 @@ int main() {
                 DrawRectangleRounded((Rectangle)boxes[i], 0.5f, 10, boxblinkColors);
              //DrawRectangleRec(boxes[i], boxblinkColors);
             }else if (clickTimers[i] > 0) { 
-                
-               if(clickTimers[randomNumber]>0){ 
-                // check=false;
-                clickTimers[randomNumber]=0.0f;
-                out1=true;
-               }
+                playerSeq[j++]=i;
+                int k=0;
+                //if(clickTimers[randomNumber]>0){
+                    bool mainloop=true; 
+                    while(mainloop){
+                    if(gameSeq[gameSeq.size()-1]==playerSeq[level-1]){
+                       mainloop=false;
+                        out1=true;
+                    }
+                    else if(gameSeq[k]==playerSeq[k]){
+                        
+                k++;
+                    }else{
+                        mainloop=false;
+                        out1=true;
+                        out=true;
+                    }
+                }
+                clickTimers[i]=0.0f;
+                //out1=true;
+              // }
             // }else if (clickTimers[randomNumber]==0){
             //     out1=true;
             //     out=true;
             // }
-            else{
-                out1=true;
-                out=true;
-            }
+            // else{
+            //     out1=true;
+            //     out=true;
+            // }
             DrawRectangleRounded((Rectangle)boxes[i], 0.5f, 10, boxClickColors);
              //DrawRectangleRec(boxes[i], boxClickColors);
             }else if (IsPointInsideRectangle(mousePoint, boxes[i])) {
